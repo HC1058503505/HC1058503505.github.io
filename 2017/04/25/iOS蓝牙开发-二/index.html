@@ -1,0 +1,1114 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS蓝牙开发," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/avatar.jpg?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="iOS蓝牙中心模式连接外设，数据接收及发送。">
+<meta name="keywords" content="iOS蓝牙开发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS蓝牙开发(二)">
+<meta property="og:url" content="http://houcong.win/2017/04/25/iOS蓝牙开发-二/index.html">
+<meta property="og:site_name" content="HouCong">
+<meta property="og:description" content="iOS蓝牙中心模式连接外设，数据接收及发送。">
+<meta property="og:image" content="http://houcong.win/images/CBCentral.jpg">
+<meta property="og:updated_time" content="2018-04-24T15:10:31.934Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS蓝牙开发(二)">
+<meta name="twitter:description" content="iOS蓝牙中心模式连接外设，数据接收及发送。">
+<meta name="twitter:image" content="http://houcong.win/images/CBCentral.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://houcong.win/2017/04/25/iOS蓝牙开发-二/"/>
+
+
+
+
+
+  <title> iOS蓝牙开发(二) | HouCong </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?af51c4a96e45c1a2b51812e1df98bddc";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">HouCong</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://houcong.win/2017/04/25/iOS蓝牙开发-二/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HouCong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HouCong">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS蓝牙开发(二)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-25T11:19:22+08:00">
+                2017-04-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS开发/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/04/25/iOS蓝牙开发-二/" class="leancloud_visitors" data-flag-title="iOS蓝牙开发(二)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>iOS蓝牙中心模式连接外设，数据接收及发送。<a id="more"></a></p>
+</blockquote>
+<h2 id="连接外设流程"><a href="#连接外设流程" class="headerlink" title="连接外设流程"></a>连接外设流程</h2><figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="string">建立Central</span> <span class="string">Manager实例进行蓝牙管理</span></div><div class="line"><span class="string">搜索,连接外设</span></div><div class="line"><span class="string">获取外设的服务,特征</span></div><div class="line"><span class="string">向外设特征值发送读取和写入请求</span></div><div class="line"><span class="string">订阅一特征值去监控其变化</span></div></pre></td></tr></table></figure>
+<h2 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h2><h3 id="创建蓝牙管理者"><a href="#创建蓝牙管理者" class="headerlink" title="创建蓝牙管理者"></a>创建蓝牙管理者</h3><blockquote>
+<p>CBCentralManager是Core Bluetooth的一个对象，代表一个本地中心设备，在使用蓝牙前，需要创建CBCenterManager实例。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">centralM = [[CBCentralManager alloc] initWithDelegate:self queue:nil options:nil];</div></pre></td></tr></table></figure>
+<p>创建蓝牙管理者时,<code>self</code>会被设置为接收中心设备所有事件的代理者，参数<code>queue</code>设置为nil后，<code>centralM</code>会通过主线程来处理事件。控制器需要实现<code>CBCentralManagerDelegate</code>、<code>CBPeripheralDelegate</code>这两个代理。当创建了一个蓝牙管理者，会回调代理的<code>centralManagerDidUpdateState:</code>方法，你必须实现这个代理方法来确定中心设备是否支持BLE以及是否可用。<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)centralManagerDidUpdateState:(CBCentralManager *)central &#123;</div><div class="line">    <span class="keyword">switch</span> (central.state) &#123;</div><div class="line">        <span class="keyword">case</span> CBManagerStateUnknown: <span class="comment">// 蓝牙状态未知 State unknown, update imminent.</span></div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"&gt;&gt;&gt;CBManagerStateUnknown"</span>);</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">case</span> CBManagerStateResetting: <span class="comment">// 蓝牙重置 The connection with the system service was momentarily lost, update imminent.</span></div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"&gt;&gt;&gt;CBManagerStateResetting"</span>);</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">case</span> CBManagerStateUnsupported: <span class="comment">// 不支持 The platform doesn't support the Bluetooth Low Energy Central/Client role.</span></div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"&gt;&gt;&gt;CBManagerStateUnsupported"</span>);</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">case</span> CBManagerStateUnauthorized: <span class="comment">// 未授权 The application is not authorized to use the Bluetooth Low Energy role.</span></div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"&gt;&gt;&gt;CBManagerStateUnauthorized"</span>);</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">case</span> CBManagerStatePoweredOff: <span class="comment">// 蓝牙未开启 Bluetooth is currently powered off.</span></div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"&gt;&gt;&gt;CBManagerStatePoweredOff"</span>);</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">default</span>: <span class="comment">// 蓝牙开启状态，可使用 Bluetooth is currently powered on and available to use.</span></div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"&gt;&gt;&gt;CBManagerStatePoweredOn"</span>);</div><div class="line">            <span class="comment">// 开始扫描外设</span></div><div class="line">            <span class="comment">// 如果你指定第一个参数为nil,centralM会返回发现的所有设备.</span></div><div class="line">            <span class="comment">// 实际开发中，你需要指定一个`CBUUID`对象数组,数组中每一个对象对应一个唯一的外设的服务</span></div><div class="line">            [centralM scanForPeripheralsWithServices:<span class="literal">nil</span> options:<span class="literal">nil</span>];</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="搜索连接外设"><a href="#搜索连接外设" class="headerlink" title="搜索连接外设"></a>搜索连接外设</h3><blockquote>
+<p>调用了<code>scanForPeripheralsWithServices:options:</code>方法来搜索可连接的外围设备后,centralM在每次搜索到一个外围设备都会回调其代理的<code>centralManager:didDiscoverPeripheral:advertisementData:RSSI:</code> 方法。任何被搜索到的外围设备都以<code>CBPeripheral</code>类的方式返回。像下面的代码，你可以实现这个代理方法来罗列出所有被搜索到的蓝牙设备</p>
+</blockquote>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)centralManager:(CBCentralManager *)central </div><div class="line"> didDiscoverPeripheral:(CBPeripheral *)peripheral </div><div class="line">     advertisementData:(<span class="built_in">NSDictionary</span>&lt;<span class="built_in">NSString</span> *,<span class="keyword">id</span>&gt; *)advertisementData </div><div class="line">                  RSSI:(<span class="built_in">NSNumber</span> *)RSSI &#123;</div><div class="line">  </div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,peripheral.name);</div><div class="line">    <span class="keyword">if</span> (peripheral.name.length &gt; <span class="number">0</span>) &#123;</div><div class="line">    	<span class="comment">// 找到的设备必须持有它，否则CBCentralManager中也不会保存peripheral，那么CBPeripheralDelegate中的方法也不会被调用！！</span></div><div class="line">        [peripherals addObject:peripheral]; </div><div class="line">        <span class="comment">// [manager stopScan]; // 根据需求可以停止搜索其他外设</span></div><div class="line">        [centralM connectPeripheral:peripheral options:<span class="literal">nil</span>]; <span class="comment">// 连接外设</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"> <span class="comment">//连接到Peripherals-成功</span></div><div class="line"> - (<span class="keyword">void</span>)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral&#123;</div><div class="line">     <span class="built_in">NSLog</span>(<span class="string">@"&gt;&gt;&gt;连接到名称为（%@）的设备-成功"</span>,peripheral.name);</div><div class="line">    <span class="comment">// 设置外设代理</span></div><div class="line">    [peripheral setDelegate:<span class="keyword">self</span>];</div><div class="line">    <span class="comment">// 搜索外设的服务</span></div><div class="line">    [peripheral discoverServices:<span class="literal">nil</span>];</div><div class="line"> &#125;</div><div class="line"></div><div class="line"><span class="comment">//连接到Peripherals-失败</span></div><div class="line">-(<span class="keyword">void</span>)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(<span class="built_in">NSError</span> *)error&#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"&gt;&gt;&gt;连接到名称为（%@）的设备-失败,原因:%@"</span>,[peripheral name],[error localizedDescription]);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//Peripherals断开连接</span></div><div class="line">- (<span class="keyword">void</span>)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(<span class="built_in">NSError</span> *)error&#123;</div><div class="line">     <span class="built_in">NSLog</span>(<span class="string">@"&gt;&gt;&gt;外设连接断开连接 %@: %@\n"</span>, [peripheral name], [error localizedDescription]);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="扫描外设中的服务器和特征"><a href="#扫描外设中的服务器和特征" class="headerlink" title="扫描外设中的服务器和特征"></a>扫描外设中的服务器和特征</h3><blockquote>
+<p>设备连接成功后，就可以扫描设备的服务了，同样是通过委托形式，扫描到结果后会进入委托方法。但是这个委托已经不再是主设备的委托<code>CBCentralManagerDelegate</code>,而是外设的委托<code>CBPeripheralDelegate</code>,这个委托包含了主设备与外设交互的许多回叫方法，包括获取services，获取characteristics，获取characteristics的值，获取characteristics的Descriptor，和Descriptor的值，写数据，读rssi，用通知的方式订阅数据等等。</p>
+</blockquote>
+<h4 id="获取外设的services"><a href="#获取外设的services" class="headerlink" title="获取外设的services"></a>获取外设的services</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//扫描到Services</span></div><div class="line">-(<span class="keyword">void</span>)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(<span class="built_in">NSError</span> *)error&#123;</div><div class="line">    <span class="comment">//  NSLog(@"&gt;&gt;&gt;扫描到服务：%@",peripheral.services);</span></div><div class="line">    <span class="keyword">if</span> (error)</div><div class="line">    &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"&gt;&gt;&gt;Discovered services for %@ with error: %@"</span>, peripheral.name, [error localizedDescription]);</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">for</span> (CBService *service <span class="keyword">in</span> peripheral.services) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,service.UUID);</div><div class="line">        <span class="comment">// 扫描每个service的Characteristics，扫描到后会进入方法： </span></div><div class="line">        <span class="comment">// -(void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error</span></div><div class="line">        [peripheral discoverCharacteristics:<span class="literal">nil</span> forService:service];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="获取服务的特征"><a href="#获取服务的特征" class="headerlink" title="获取服务的特征"></a>获取服务的特征</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 搜索服务的特征</span></div><div class="line">- (<span class="keyword">void</span>)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(<span class="built_in">NSError</span> *)error &#123;</div><div class="line">    <span class="keyword">if</span> (error)</div><div class="line">    &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"error Discovered characteristics for %@ with error: %@"</span>, service.UUID, [error localizedDescription]);</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="keyword">for</span> (CBCharacteristic *characteristic <span class="keyword">in</span> service.characteristics)</div><div class="line">    &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"service:%@ 的 Characteristic: %@"</span>,service.UUID,characteristic.UUID);</div><div class="line">        </div><div class="line">         <span class="comment">// 获取Characteristic的值，当你试图去读一个特征对应的值，外围设备会回调它的代理方法：</span></div><div class="line">         <span class="comment">// -(void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error</span></div><div class="line">        [peripheral readValueForCharacteristic:characteristic];</div><div class="line">        </div><div class="line">        </div><div class="line">        <span class="comment">// 搜索Characteristic的Descriptors，读到数据会进入方法：</span></div><div class="line">        <span class="comment">// -(void)peripheral:(CBPeripheral *)peripheral didDiscoverDescriptorsForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error</span></div><div class="line">        [peripheral discoverDescriptorsForCharacteristic:characteristic];</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 获取的charateristic的值</span></div><div class="line">-(<span class="keyword">void</span>)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(<span class="built_in">NSError</span> *)error&#123;</div><div class="line">    <span class="comment">//打印出characteristic的UUID和值</span></div><div class="line">    <span class="comment">//!注意，value的类型是NSData，具体开发时，会根据外设协议制定的方式去解析数据</span></div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"characteristic uuid:%@  value:%@"</span>,characteristic.UUID,characteristic.value);</div><div class="line">    </div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//搜索到Characteristic的Descriptors</span></div><div class="line">-(<span class="keyword">void</span>)peripheral:(CBPeripheral *)peripheral didDiscoverDescriptorsForCharacteristic:(CBCharacteristic *)characteristic error:(<span class="built_in">NSError</span> *)error&#123;</div><div class="line">    </div><div class="line">    <span class="comment">//打印出Characteristic和他的Descriptors</span></div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"characteristic uuid:%@"</span>,characteristic.UUID);</div><div class="line">    <span class="keyword">for</span> (CBDescriptor *d <span class="keyword">in</span> characteristic.descriptors) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Descriptor uuid:%@"</span>,d.UUID);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//获取到Descriptors的值</span></div><div class="line">-(<span class="keyword">void</span>)peripheral:(CBPeripheral *)peripheral didUpdateValueForDescriptor:(CBDescriptor *)descriptor error:(<span class="built_in">NSError</span> *)error&#123;</div><div class="line">    <span class="comment">//打印出DescriptorsUUID 和value</span></div><div class="line">    <span class="comment">//这个descriptor都是对于characteristic的描述，一般都是字符串，所以这里我们转换成字符串去解析</span></div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"characteristic uuid:%@  value:%@"</span>,[<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@"</span>,descriptor.UUID],descriptor.value);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="把数据写到Characteristic中"><a href="#把数据写到Characteristic中" class="headerlink" title="把数据写到Characteristic中"></a>把数据写到Characteristic中</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">-(<span class="keyword">void</span>)writeCharacteristic:(CBPeripheral *)peripheral</div><div class="line">            characteristic:(CBCharacteristic *)characteristic</div><div class="line">                     value:(<span class="built_in">NSData</span> *)value&#123;</div><div class="line">    </div><div class="line">    <span class="comment">//打印出 characteristic 的权限，可以看到有很多种，这是一个NS_OPTIONS，就是可以同时用于好几个值，常见的有read，write，notify，indicate，知知道这几个基本就够用了，前连个是读写权限，后两个都是通知，两种不同的通知方式。</span></div><div class="line">    <span class="comment">/*</span></div><div class="line">     typedef NS_OPTIONS(NSUInteger, CBCharacteristicProperties) &#123;</div><div class="line">     CBCharacteristicPropertyBroadcast												= 0x01,</div><div class="line">     CBCharacteristicPropertyRead													= 0x02,</div><div class="line">     CBCharacteristicPropertyWriteWithoutResponse									= 0x04,</div><div class="line">     CBCharacteristicPropertyWrite													= 0x08,</div><div class="line">     CBCharacteristicPropertyNotify													= 0x10,</div><div class="line">     CBCharacteristicPropertyIndicate												= 0x20,</div><div class="line">     CBCharacteristicPropertyAuthenticatedSignedWrites								= 0x40,</div><div class="line">     CBCharacteristicPropertyExtendedProperties										= 0x80,</div><div class="line">     CBCharacteristicPropertyNotifyEncryptionRequired NS_ENUM_AVAILABLE(NA, 6_0)		= 0x100,</div><div class="line">     CBCharacteristicPropertyIndicateEncryptionRequired NS_ENUM_AVAILABLE(NA, 6_0)	= 0x200</div><div class="line">     &#125;;</div><div class="line">     </div><div class="line">     */</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%lu"</span>, (<span class="keyword">unsigned</span> <span class="keyword">long</span>)characteristic.properties);</div><div class="line">    </div><div class="line">    </div><div class="line">    <span class="comment">//只有 characteristic.properties 有write的权限才可以写</span></div><div class="line">    <span class="keyword">if</span>(characteristic.properties &amp; CBCharacteristicPropertyWrite)&#123;</div><div class="line">        <span class="comment">/*</span></div><div class="line">         最好一个type参数可以为CBCharacteristicWriteWithResponse或type:CBCharacteristicWriteWithResponse,区别是是否会有反馈</div><div class="line">         */</div><div class="line">        [peripheral writeValue:value forCharacteristic:characteristic type:CBCharacteristicWriteWithResponse];</div><div class="line">    &#125;<span class="keyword">else</span>&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"该字段不可写！"</span>);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="订阅Characteristic的通知"><a href="#订阅Characteristic的通知" class="headerlink" title="订阅Characteristic的通知"></a>订阅Characteristic的通知</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//设置通知</span></div><div class="line">-(<span class="keyword">void</span>)notifyCharacteristic:(CBPeripheral *)peripheral</div><div class="line">             characteristic:(CBCharacteristic *)characteristic&#123;</div><div class="line">    <span class="comment">//设置通知，数据通知会进入：didUpdateValueForCharacteristic方法</span></div><div class="line">    [peripheral setNotifyValue:<span class="literal">YES</span> forCharacteristic:characteristic];</div><div class="line">    </div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//取消通知</span></div><div class="line">-(<span class="keyword">void</span>)cancelNotifyCharacteristic:(CBPeripheral *)peripheral</div><div class="line">                   characteristic:(CBCharacteristic *)characteristic&#123;</div><div class="line">    </div><div class="line">    [peripheral setNotifyValue:<span class="literal">NO</span> forCharacteristic:characteristic];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="停止扫描并断开连接"><a href="#停止扫描并断开连接" class="headerlink" title="停止扫描并断开连接"></a>停止扫描并断开连接</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//停止扫描并断开连接</span></div><div class="line">-(<span class="keyword">void</span>)disconnectPeripheral:(CBCentralManager *)centralManager</div><div class="line">                 peripheral:(CBPeripheral *)peripheral&#123;</div><div class="line">    <span class="comment">//停止扫描</span></div><div class="line">    [centralM stopScan];</div><div class="line">    <span class="comment">//断开连接</span></div><div class="line">    [centralM cancelPeripheralConnection:peripheral];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>程序运行流程图如下:<br><img src="/images/CBCentral.jpg" alt="CBCentral-image"></p>
+<hr>
+<p>参考文章:<br><a href="http://www.cnblogs.com/kenshincui/p/4220402.html#bluetooth" target="_blank" rel="external">Kenshin Cui</a><br><a href="http://blog.csdn.net/dolacmeng/article/details/46457487" target="_blank" rel="external">ImJackXu</a><br><a href="http://liuyanwei.jumppo.com/2015/08/14/ios-BLE-2.html" target="_blank" rel="external">liuyanwei</a><br><a href="https://developer.apple.com/library/content/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/AboutCoreBluetooth/Introduction.html#//apple_ref/doc/uid/TP40013257-CH1-SW1" target="_blank" rel="external">Core Bluetooth Programing Guide</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS蓝牙开发/" rel="tag"># iOS蓝牙开发</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/25/iOS蓝牙开发-三/" rel="next" title="iOS蓝牙开发(三)">
+                <i class="fa fa-chevron-left"></i> iOS蓝牙开发(三)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/24/iOS蓝牙开发-一/" rel="prev" title="iOS蓝牙开发(一)">
+                iOS蓝牙开发(一) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="uyan_frame"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="HouCong" />
+          <p class="site-author-name" itemprop="name">HouCong</p>
+           
+              <p class="site-description motion-element" itemprop="description">倚刀独卧凛霜间，笑看芳华尽凋残。百景独钟此风雪，爱他飞白爱他寒。</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/HC1058503505" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/u/d1e4943d5dbd" target="_blank" title="简书">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  简书
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#连接外设流程"><span class="nav-number">1.</span> <span class="nav-text">连接外设流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现步骤"><span class="nav-number">2.</span> <span class="nav-text">实现步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建蓝牙管理者"><span class="nav-number">2.1.</span> <span class="nav-text">创建蓝牙管理者</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#搜索连接外设"><span class="nav-number">2.2.</span> <span class="nav-text">搜索连接外设</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扫描外设中的服务器和特征"><span class="nav-number">2.3.</span> <span class="nav-text">扫描外设中的服务器和特征</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#获取外设的services"><span class="nav-number">2.3.1.</span> <span class="nav-text">获取外设的services</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获取服务的特征"><span class="nav-number">2.3.2.</span> <span class="nav-text">获取服务的特征</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#把数据写到Characteristic中"><span class="nav-number">2.4.</span> <span class="nav-text">把数据写到Characteristic中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#订阅Characteristic的通知"><span class="nav-number">2.5.</span> <span class="nav-text">订阅Characteristic的通知</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#停止扫描并断开连接"><span class="nav-number">2.6.</span> <span class="nav-text">停止扫描并断开连接</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heartbeat"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HouCong</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2139755"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Q7x4FATVsChQwXoOt1YlCMd2-gzGzoHsz", "keFPrjhxuzJXNs0R32jEHmpK");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

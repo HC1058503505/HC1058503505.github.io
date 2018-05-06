@@ -1,0 +1,1108 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS开发技巧," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/avatar.jpg?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="我们知道, iOS7的导航控制器有一个自带的pop手势(interactivePopGestureRecognizer), 该手势允许我们从屏幕左侧向右滑动来pop掉当前的栈顶控制器. 事实上, 我们看到国内许多app就是采用了系统自带的这个recognizer, 并没有定制切换效果. 而也有很多app(如最新版的网易新闻)在维持系统pop效果的前提下, 把手势响应区域扩展到全屏!这里对这一实现">
+<meta name="keywords" content="iOS开发技巧">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS7+ 实现全屏POP手势">
+<meta property="og:url" content="http://houcong.win/2017/05/27/iOS7-实现全屏POP手势/index.html">
+<meta property="og:site_name" content="HouCong">
+<meta property="og:description" content="我们知道, iOS7的导航控制器有一个自带的pop手势(interactivePopGestureRecognizer), 该手势允许我们从屏幕左侧向右滑动来pop掉当前的栈顶控制器. 事实上, 我们看到国内许多app就是采用了系统自带的这个recognizer, 并没有定制切换效果. 而也有很多app(如最新版的网易新闻)在维持系统pop效果的前提下, 把手势响应区域扩展到全屏!这里对这一实现">
+<meta property="og:image" content="http://houcong.win/images/interactivePopGestureRecognizer.png">
+<meta property="og:updated_time" content="2018-04-24T15:10:31.934Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS7+ 实现全屏POP手势">
+<meta name="twitter:description" content="我们知道, iOS7的导航控制器有一个自带的pop手势(interactivePopGestureRecognizer), 该手势允许我们从屏幕左侧向右滑动来pop掉当前的栈顶控制器. 事实上, 我们看到国内许多app就是采用了系统自带的这个recognizer, 并没有定制切换效果. 而也有很多app(如最新版的网易新闻)在维持系统pop效果的前提下, 把手势响应区域扩展到全屏!这里对这一实现">
+<meta name="twitter:image" content="http://houcong.win/images/interactivePopGestureRecognizer.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://houcong.win/2017/05/27/iOS7-实现全屏POP手势/"/>
+
+
+
+
+
+  <title> iOS7+ 实现全屏POP手势 | HouCong </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?af51c4a96e45c1a2b51812e1df98bddc";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">HouCong</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://houcong.win/2017/05/27/iOS7-实现全屏POP手势/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HouCong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HouCong">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS7+ 实现全屏POP手势
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-27T15:59:33+08:00">
+                2017-05-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS开发/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/05/27/iOS7-实现全屏POP手势/" class="leancloud_visitors" data-flag-title="iOS7+ 实现全屏POP手势">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>我们知道, iOS7的导航控制器有一个自带的pop手势(interactivePopGestureRecognizer), 该手势允许我们从屏幕左侧向右滑动来pop掉当前的栈顶控制器. 事实上, 我们看到国内许多app就是采用了系统自带的这个recognizer, 并没有定制切换效果. 而也有很多app(如最新版的网易新闻)在维持系统pop效果的前提下, 把手势响应区域扩展到全屏!这里对这一实现过程进行总结。<a id="more"></a></p>
+</blockquote>
+<h2 id="问题发掘"><a href="#问题发掘" class="headerlink" title="问题发掘"></a>问题发掘</h2><p>导航栏的pop手势只能够响应左侧有限的区域内，内部实现时肯定是做了限制，这种限制应该也是对手势属性值或方法的设置来实现，那么我们需要看一下该手势的具体实现，当然是使用runtime。<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> gesture = navigationController?.interactivePopGestureRecognizer</div><div class="line"><span class="built_in">print</span>(<span class="string">"gesture的类名:\(NSStringFromClass((gesture?.classForCoder)!))"</span>)</div><div class="line"><span class="built_in">print</span>(<span class="string">"gesture的父类名:\(NSStringFromClass((gesture?.superclass)!))"</span>)</div><div class="line"></div><div class="line"><span class="keyword">var</span> ivarCount:<span class="type">UInt32</span> = <span class="number">0</span></div><div class="line"><span class="keyword">let</span> ivarList = class_copyIvarList(gesture?.classForCoder, &amp;ivarCount)</div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span> ..&lt; ivarCount &#123;</div><div class="line">    <span class="keyword">let</span> ivar = ivarList![<span class="type">Int</span>(i)]</div><div class="line">    <span class="keyword">let</span> name = ivar_getName(ivar)</div><div class="line">    <span class="built_in">print</span>(<span class="string">"class_copyIvarList---\(String(cString: name!, encoding: .utf8) ?? "</span><span class="string">")"</span>)</div><div class="line">&#125;</div><div class="line">free(ivarList)</div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">var</span> proprtyCount:<span class="type">UInt32</span> = <span class="number">0</span></div><div class="line"><span class="keyword">let</span> propertyList = class_copyPropertyList(gesture?.classForCoder, &amp;proprtyCount)</div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span> ..&lt; proprtyCount &#123;</div><div class="line">    <span class="keyword">let</span> property = propertyList![<span class="type">Int</span>(i)]</div><div class="line">    <span class="built_in">print</span>(<span class="string">"class_copyPropertyList---\(String(cString: property_getName(property), encoding: .utf8) ?? "</span><span class="string">")"</span>)</div><div class="line">&#125;</div><div class="line">free(propertyList)</div></pre></td></tr></table></figure></p>
+<p>结果如下：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">gesture的类名:<span class="built_in">UIScreenEdgePanGestureRecognizer</span></div><div class="line">gesture的父类名:<span class="built_in">UIPanGestureRecognizer</span></div><div class="line">class_copyIvarList---_recognizer</div><div class="line">class_copyPropertyList---edges</div><div class="line">class_copyPropertyList---hash</div><div class="line">class_copyPropertyList---superclass</div><div class="line">class_copyPropertyList---description</div><div class="line">class_copyPropertyList---debugDescription</div></pre></td></tr></table></figure></p>
+<p>可见是<code>UIScreenEdgePanGestureRecognizer</code>私有类的edges属性决定了pop手势的作用范围。我们怎么利用这一特性呢？</p>
+<ol>
+<li>设置其edges达到全屏pop</li>
+<li>想想我们添加手势处理事件时需要<code>target-action</code>,我们可以利用该手势的<code>targe-action</code></li>
+</ol>
+<p>这里第一种方法以后尝试，我们现在使用第二种方法来实现。</p>
+<h2 id="寻找target-action"><a href="#寻找target-action" class="headerlink" title="寻找target-action"></a>寻找target-action</h2><p><img src="/images/interactivePopGestureRecognizer.png" alt="interactivePopGestureRecognizer"><br>由上图可知，interactivePopGestureRecognizer的类型为UIGestureRecognizer,所以<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> ivarGesture:<span class="type">UInt32</span> = <span class="number">0</span></div><div class="line"><span class="keyword">let</span> ivarGestureList = class_copyIvarList(<span class="type">UIGestureRecognizer</span>.<span class="keyword">self</span>, &amp;ivarGesture)</div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span> ..&lt; ivarGesture &#123;</div><div class="line">    <span class="keyword">let</span> ivar = ivarGestureList![<span class="type">Int</span>(i)]</div><div class="line">    <span class="keyword">let</span> name = ivar_getName(ivar)</div><div class="line">    <span class="keyword">let</span> type = ivar_getTypeEncoding(ivar)</div><div class="line">    <span class="built_in">print</span>(<span class="string">"ivarGestureName---\(String(cString: name!, encoding: .utf8) ?? "</span><span class="string">")   ivarGestureType:\(String(cString: type!, encoding: .utf8) ?? "</span><span class="string">")"</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line">free(ivarGestureList)</div></pre></td></tr></table></figure></p>
+<p>结果如下：<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">ivarGestureName---_gestureFlags   ivarGestureType:&#123;?=<span class="string">"delegateShouldBegin"</span>b1<span class="string">"delegateCanPrevent"</span>b1<span class="string">"delegateCanBePrevented"</span>b1<span class="string">"delegateShouldRecognizeSimultaneously"</span>b1<span class="string">"delegateShouldReceiveTouch"</span>b1<span class="string">"delegateShouldReceivePress"</span>b1<span class="string">"delegateShouldRequireFailure"</span>b1<span class="string">"delegateShouldBeRequiredToFail"</span>b1<span class="string">"delegateFailed"</span>b1<span class="string">"privateDelegateShouldBegin"</span>b1<span class="string">"privateDelegateCanPrevent"</span>b1<span class="string">"privateDelegateCanBePrevented"</span>b1<span class="string">"privateDelegateShouldRecognizeSimultaneously"</span>b1<span class="string">"privateDelegateShouldReceiveTouch"</span>b1<span class="string">"privateDelegateShouldReceivePress"</span>b1<span class="string">"privateDelegateShouldRequireFailure"</span>b1<span class="string">"privateDelegateShouldBeRequiredToFail"</span>b1<span class="string">"subclassShouldRequireFailure"</span>b1<span class="string">"subclassShouldBeRequiredToFail"</span>b1<span class="string">"hasSubclassDynamicFailureRequirements"</span>b1<span class="string">"hasDelegateDynamicFailureRequirements"</span>b1<span class="string">"subclassTouchesEstimatedPropertiesUpdated"</span>b1<span class="string">"queriedFailureRequirements"</span>b1<span class="string">"cancelsTouchesInView"</span>b1<span class="string">"delaysTouchesBegan"</span>b1<span class="string">"delaysTouchesEnded"</span>b1<span class="string">"disabled"</span>b1<span class="string">"dirty"</span>b1<span class="string">"delivered"</span>b1<span class="string">"deliveredEndedOrCancelled"</span>b1<span class="string">"continuous"</span>b1<span class="string">"requiresDelayedBegan"</span>b1<span class="string">"willBeginAfterSatisfyingFailureRequirements"</span>b1<span class="string">"requiresSystemGesturesToFail"</span>b1<span class="string">"acceptsFailureRequirements"</span>b1<span class="string">"requiresExclusiveTouchType"</span>b1<span class="string">"initialTouchTypeIsValid"</span>b1<span class="string">"forceRequirementSatisfied"</span>b1&#125;</div><div class="line">ivarGestureName---_targets   ivarGestureType:@<span class="string">"NSMutableArray"</span></div><div class="line">ivarGestureName---_delayedTouches   ivarGestureType:@<span class="string">"NSMutableArray"</span></div><div class="line">ivarGestureName---_delayedPresses   ivarGestureType:@<span class="string">"NSMutableArray"</span></div><div class="line">ivarGestureName---_view   ivarGestureType:@<span class="string">"UIView"</span></div><div class="line">ivarGestureName---_lastTouchTimestamp   ivarGestureType:d</div><div class="line">ivarGestureName---_state   ivarGestureType:q</div><div class="line">ivarGestureName---_allowedTouchTypes   ivarGestureType:q</div><div class="line">ivarGestureName---_initialTouchType   ivarGestureType:q</div><div class="line">ivarGestureName---_internalActiveTouches   ivarGestureType:@<span class="string">"NSMutableSet"</span></div><div class="line">ivarGestureName---_forceClassifier   ivarGestureType:@<span class="string">"_UIForceLevelClassifier"</span></div><div class="line">ivarGestureName---_requiredPreviewForceState   ivarGestureType:q</div><div class="line">ivarGestureName---_touchForceObservable   ivarGestureType:@<span class="string">"_UITouchForceObservable"</span></div><div class="line">ivarGestureName---_touchForceObservableAndClassifierObservation   ivarGestureType:@<span class="string">"NSObservation"</span></div><div class="line">ivarGestureName---_forceTargets   ivarGestureType:@<span class="string">"NSMutableArray"</span></div><div class="line">ivarGestureName---_forcePressCount   ivarGestureType:<span class="type">Q</span></div><div class="line">ivarGestureName---_beganObservable   ivarGestureType:@<span class="string">"NSObservationSource"</span></div><div class="line">ivarGestureName---_failureRequirements   ivarGestureType:@<span class="string">"NSMutableSet"</span></div><div class="line">ivarGestureName---_failureDependents   ivarGestureType:@<span class="string">"NSMutableSet"</span></div><div class="line">ivarGestureName---_delegate   ivarGestureType:@<span class="string">"&lt;UIGestureRecognizerDelegate&gt;"</span></div><div class="line">ivarGestureName---_allowedPressTypes   ivarGestureType:@<span class="string">"NSArray"</span></div><div class="line">ivarGestureName---_gestureEnvironment   ivarGestureType:@<span class="string">"UIGestureEnvironment"</span></div></pre></td></tr></table></figure></p>
+<p>我猜<code>_targets</code>就是我们要找的，感觉离成功不远了<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 获取targets</span></div><div class="line"><span class="keyword">let</span> targets = navigationController?.interactivePopGestureRecognizer?.value(forKeyPath: <span class="string">"_targets"</span>) <span class="keyword">as</span>! <span class="type">Array</span>&lt;<span class="type">Any</span>&gt;</div><div class="line"><span class="keyword">for</span> target <span class="keyword">in</span> targets &#123;</div><div class="line">	<span class="built_in">print</span>(target)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>结果如下：<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(action=handleNavigationTransition:, target=&lt;_UINavigationInteractiveTransition <span class="number">0x7fe95d514850</span>&gt;)</div></pre></td></tr></table></figure></p>
+<p>成功，action，target全部拿到，下面就是添加我们自己的手势然后设置action，target。<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 全屏pop手势</span></div><div class="line"><span class="keyword">let</span> targets = navigationController?.interactivePopGestureRecognizer?.value(forKeyPath: <span class="string">"_targets"</span>) <span class="keyword">as</span>! <span class="type">Array</span>&lt;<span class="type">Any</span>&gt;</div><div class="line"></div><div class="line"><span class="keyword">let</span> obj = targets.last! <span class="comment">// (action=handleNavigationTransition:, target=&lt;_UINavigationInteractiveTransition 0x7fe95d514850&gt;)</span></div><div class="line"><span class="keyword">let</span> selector = <span class="type">Selector</span>((<span class="string">"handleNavigationTransition:"</span>))</div><div class="line"><span class="keyword">let</span> target = (obj <span class="keyword">as</span> <span class="type">AnyObject</span>).value(forKeyPath: <span class="string">"target"</span>) <span class="comment">// navigationController?.interactivePopGestureRecognizer?.delegate</span></div><div class="line"><span class="keyword">let</span> pan = <span class="type">UIPanGestureRecognizer</span>(target: target, action: selector)</div><div class="line"></div><div class="line">view.addGestureRecognizer(pan)</div></pre></td></tr></table></figure></p>
+<p>最后经尝试发现interactivePopGestureRecognizer的代理就是pop手势的target。</p>
+<p>参考链接：<br><a href="http://www.jianshu.com/p/72651cdbd914" target="_blank" rel="external">KVC实现全屏pop手势(iOS7+)</a><br><a href="https://onevcat.com/2013/10/vc-transition-in-ios7/" target="_blank" rel="external">喵神-iOS7中的ViewController切换</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS开发技巧/" rel="tag"># iOS开发技巧</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/07/Git使用总结/" rel="next" title="Git使用总结">
+                <i class="fa fa-chevron-left"></i> Git使用总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/17/HTML速查表/" rel="prev" title="HTML速查表">
+                HTML速查表 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="uyan_frame"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="HouCong" />
+          <p class="site-author-name" itemprop="name">HouCong</p>
+           
+              <p class="site-description motion-element" itemprop="description">倚刀独卧凛霜间，笑看芳华尽凋残。百景独钟此风雪，爱他飞白爱他寒。</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/HC1058503505" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/u/d1e4943d5dbd" target="_blank" title="简书">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  简书
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题发掘"><span class="nav-number">1.</span> <span class="nav-text">问题发掘</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#寻找target-action"><span class="nav-number">2.</span> <span class="nav-text">寻找target-action</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heartbeat"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HouCong</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2139755"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Q7x4FATVsChQwXoOt1YlCMd2-gzGzoHsz", "keFPrjhxuzJXNs0R32jEHmpK");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
